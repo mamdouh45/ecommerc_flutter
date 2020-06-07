@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/main.dart';
 
+import 'home.dart';
+
 /*
 * first return Scaffold .. ( appbar)
 *second body(..appbar(),ListView..(Container()))
