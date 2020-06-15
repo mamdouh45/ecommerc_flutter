@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -65,129 +66,65 @@ class _LoginState extends State<Login> {
       });
       final GoogleSignInAccount googleAccount = await googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
-      await googleAccount.authentication;
-
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
-          idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-      try {
-        FirebaseUser user = (await firebaseAuth.signInWithCredential(
-            credential)) as FirebaseUser;
-        return user;
-      } catch (e) {
-        print(e.toString());
-        return null;
-      }
+          await googleAccount.authentication;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text("login", style: TextStyle(color: Colors.red.shade900),),
-        elevation: 0.1,
-      ),
       body: Stack(
-        children: [Center(
-          child: FlatButton(
-            color: Colors.red.shade900,
-            onPressed: () {
-              handleSignIn();
-            },
-            child: Text("sign in / Sign up with google ",
-              style: TextStyle(color: Colors.white),),
-          ),
-        ),
-          Visibility(visible: loading ?? true,
+        children:<Widget>[
+          Visibility(
+              visible: loading ?? true,
               child: Center(
                 child: Container(
                   alignment: Alignment.center,
                   color: Colors.white.withOpacity(0.9),
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.red),),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                  ),
                 ),
               ))
         ],
-
       ),
+      bottomNavigationBar: Container(
+          child: Padding(
+            padding: const EdgeInsets.only(left:12.0,right:12.0,top:8.0,bottom:8.0),
+            child: FlatButton(
+              color: Colors.red.shade900,
+              onPressed: () {
+                handleSignIn();
+              },
+              child: Text(
+                "sign in / Sign up with google ",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ) ,
     );
   }
 
-  Future<FirebaseUser>handleSignIn() async {
-     preferences = await SharedPreferences.getInstance();
+  Future<FirebaseUser> handleSignIn() async {
+    preferences = await SharedPreferences.getInstance();
 
-     setState(() {
-       loading = true;
-     });
-     final GoogleSignInAccount googleAccount = await googleSignIn.signIn();
-     final GoogleSignInAuthentication googleAuth =
-         await googleAccount.authentication;
+    setState(() {
+      loading = true;
+    });
+    final GoogleSignInAccount googleAccount = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleAccount.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
-     final AuthCredential credential = GoogleAuthProvider.getCredential(
-         idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-     try {
-       FirebaseUser user = (await firebaseAuth.signInWithCredential(
-           credential)) as FirebaseUser;
-     return user;
-     } catch (e) {
-     print(e.toString());
-     return null;
-     }
-   }
-   }
-
-/*
-*    loading = true;
-      });
-      GoogleSignInAccount googleAccount = await googleSignIn.signIn();
-      GoogleSignInAuthentication googleAuth =
-      await googleAccount.authentication;
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
-          idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-      try {
-        FirebaseUser user = (await firebaseAuth.signInWithCredential(
-            credential)) as FirebaseUser;
-        return user;
-      } catch (e) {
-        print(e.toString());
-        return null;
-      }
+    try{
+      final FirebaseUser user = (await firebaseAuth.signInWithCredential(credential)).user;
+      print("signed in " + user.displayName);
+      return user;
+    }catch(e){
+      print(e.toString());
+      return null;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text("login", style: TextStyle(color: Colors.red.shade900),),
-        elevation: 0.1,
-      ),
-      body: Stack(
-        children: [Center(
-          child: FlatButton(
-            color: Colors.red.shade900,
-            onPressed: () {
-              handleSignin();
-            },
-            child: Text("sign in / Sign up with google ",
-              style: TextStyle(color: Colors.white),),
-          ),
-        ),
-          Visibility(visible: loading ?? true,
-              child: Center(
-                child: Container(
-                  alignment: Alignment.center,
-                  color: Colors.white.withOpacity(0.9),
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.red),),
-                ),
-              ))
-        ],
-
-      ),
-    );
   }
 }
-*/
